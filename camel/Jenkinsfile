@@ -2,6 +2,7 @@
 node('pipeline') {
   echo """
   CAMEL_VERSION : ${CAMEL_VERSION}
+  CAMEL_PROD_BRANCH : ${CAMEL_PROD_BRANCH}
   CAMEL_VERSION_BRANCH : ${CAMEL_VERSION_BRANCH}
   """
 
@@ -26,13 +27,22 @@ node('pipeline') {
   def tmpDir = pwd tmp: true
 
   def branch = "camel-${CAMEL_VERSION}-branch" 
+  def camelprodbranch = "camel-prod-branch"
 
+  // Check out the branch
   sh "rm -rf ${tmpDir}/${branch}"
   sh "git clone -b ${CAMEL_VERSION_BRANCH} https://github.com/apache/camel.git ${tmpDir}/${branch}"
  
-  sh "ls ${tmpDir}/${branch}"
+  // Check out the prod branch we will copy the product files from
+  sh "git clone -b ${CAMEL_PROD_BRANCH} https://github.com/jboss-fuse/camel.git ${tmpDir}/${camelprodbranch}"
+
+  // Change the version
+  sh "cd ${tmpDir}/${branch}; mvn -DnewVersion=${CAMEL_VERSION}-SNAPSHOT -DgenerateBackupPoms=false versions:set"
+
 
   try {
+
+
 
 
   } catch (err) {

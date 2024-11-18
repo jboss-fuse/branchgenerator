@@ -33,12 +33,9 @@ node('pipeline') {
   sh "rm -rf ${tmpDir}/${branch}"
   sh "git clone -b ${CAMEL_VERSION_BRANCH} https://github.com/apache/camel.git ${tmpDir}/${branch}"
  
-  // Check out the prod branch we will copy the product files from
-  sh "git clone -b ${CAMEL_PROD_BRANCH} https://github.com/jboss-fuse/camel.git ${tmpDir}/${camelprodbranch}"
-
-  // Change the version
   sh "cd ${tmpDir}/${branch}; mvn -DnewVersion=${CAMEL_VERSION}-SNAPSHOT -DgenerateBackupPoms=false versions:set"
 
+  git url: "https://github.com/jboss-fuse/camel.git", branch: ${CAMEL_PROD_BRANCH}, credentialsId: 'github.com'
 
   try {
 

@@ -2,7 +2,7 @@
 node('pipeline') {
   echo """
   CAMEL_VERSION : ${CAMEL_VERSION}
-  CAMEL_BRANCH_VERSION : ${CAMEL_BRANCH_VERSION}
+  CAMEL_VERSION_BRANCH : ${CAMEL_VERSION_BRANCH}
   """
 
   String CWD = pwd()
@@ -28,7 +28,7 @@ node('pipeline') {
   def branch = "camel-${CAMEL_VERSION}-branch" 
 
   sh "rm -rf ${tmpDir}/${branch}"
-  sh "git clone -b ${branch} https://github.com/apache/camel.git ${tmpDir}/${branch}"
+  sh "git clone -b ${CAMEL_VERSION_BRANCH} https://github.com/apache/camel.git ${tmpDir}/${branch}"
  
   sh "ls ${tmpDir}/${branch}"
 

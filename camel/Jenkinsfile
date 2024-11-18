@@ -1,0 +1,43 @@
+#!/usr/bin/groovy
+node('pipeline') {
+  echo """
+  CAMEL_VERSION : ${CAMEL_VERSION}
+  CAMEL_BRANCH_VERSION : ${CAMEL_BRANCH_VERSION}
+  """
+
+  String CWD = pwd()
+
+  // Load up CI helper methods
+  checkout scm
+
+  // Tooling versions
+  def mvnHome = tool 'maven-3.8.4'
+  def javaHome = tool 'java-17'
+  def goHome = tool 'go-1.14'
+
+  // Configure tooling
+  env.GOROOT = "${goHome}"
+  env.PATH = "${javaHome}/bin:${mvnHome}/bin:${goHome}/bin:${env.PATH}"
+  env.JAVA_HOME = "${javaHome}"
+  env.MAVEN_OPTS="-Xmx3g -Dmaven.artifact.threads=5"
+
+  // Clear the workspace
+  sh "pwd; ls -lah"
+  def tmpDir = pwd tmp: true
+
+  def branch = "camel-${CAMEL_VERSION}-branch" 
+
+  sh "rm -rf ${tmpDir}/${branch}"
+  sh "git clone -b ${branch} https://github.com/apache/camel.git ${tmpDir}/${branch}"
+ 
+  sh "ls ${tmpDir}/${branch}"
+
+  try {
+
+
+  } catch (err) {
+    currentBuild.result = "FAILURE"
+    throw err
+  } finally {
+  }
+}

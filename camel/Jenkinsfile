@@ -54,10 +54,14 @@ node('pipeline') {
     echo "========================="
     echo "== Applying pre-prod-maven-plugin patches"
 
-    sh "ls ${CWD}/camelpatches"
-    def baseDir = camelpatches
-    dir.eachFileRecurse (FileType.FILES) { file ->
-      list << file
+    File[] files = new File("camelpatches").listFiles();
+    Arrays.sort(files)
+    for (File patchfile : files) {
+      if (patchfile.getName().toString().startsWith("pre-")) {
+        echo "cd ${tmpDir}/${branch}; git apply --check ${CWD}/${patchfile}"
+        sh "cd ${tmpDir}/${branch}; git apply --check ${CWD}/${patchfile}"
+        sh "cd ${tmpDir}/${branch}; git am --keep-cr --signoff < ${CWD}/${patchfile}"
+      }
     }
 
     echo "========================="
@@ -84,6 +88,16 @@ node('pipeline') {
     echo "========================="
     echo "== Applying post-prod-maven-plugin patches"
     echo "========================="
+
+    File[] files = new File("camelpatches").listFiles();
+    Arrays.sort(files)
+    for (File patchfile : files) {
+      if (patchfile.getName().toString().startsWith("post-")) {
+        echo "cd ${tmpDir}/${branch}; git apply --check ${CWD}/${patchfile}"
+        sh "cd ${tmpDir}/${branch}; git apply --check ${CWD}/${patchfile}"
+        sh "cd ${tmpDir}/${branch}; git am --keep-cr --signoff < ${CWD}/${patchfile}"
+      }
+    }
   } catch (err) {
     currentBuild.result = "FAILURE"
     throw err

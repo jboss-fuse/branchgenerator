@@ -45,7 +45,7 @@ node('pipeline') {
   // Check out the prod branch and copy over pieces
   git url: "https://github.com/jboss-fuse/camel.git", branch: "${CAMEL_PROD_BRANCH}", credentialsId: 'github.com'
   sh "cp -r product ${tmpDir}/${branch}"
-  sh "cd ${tmpDir}/${branch}; git add product; git commit -a -m \"Add product directory\""
+  //sh "cd ${tmpDir}/${branch}; git add product; git commit -a -m \"Add product directory\""
 
   // Apply pre-product patches
   try {

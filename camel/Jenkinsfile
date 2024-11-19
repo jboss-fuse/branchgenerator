@@ -57,9 +57,9 @@ node('pipeline') {
     File[] files = new File("camelpatches").listFiles().sort{ it.name }
     for (File patchfile : files) {
       if (patchfile.getName().toString().startsWith("pre-")) {
-        echo "cd ${tmpDir}/${branch}; git apply --check ${CWD}/${patchfile}"
-        sh "cd ${tmpDir}/${branch}; git apply --check ${CWD}/${patchfile}"
-        sh "cd ${tmpDir}/${branch}; git am --keep-cr --signoff < ${CWD}/${patchfile}"
+        echo "cd ${tmpDir}/${branch}; git apply --check ${CWD}/" + patchfile.toString()
+        sh "cd ${tmpDir}/${branch}; git apply --check ${CWD}/" + patchfile.toString()
+        sh "cd ${tmpDir}/${branch}; git am --keep-cr --signoff < ${CWD}/" + patchfile.toString()
       }
     }
 

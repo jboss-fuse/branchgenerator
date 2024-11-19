@@ -52,6 +52,7 @@ node('pipeline') {
     echo "========================="
     echo "== Applying pre-prod-maven-plugin patches"
 
+    sh "ls ${CWD}/camelpatches"
     def baseDir = new File("${CWD}/camelpatches")
     dir.eachFileRecurse (FileType.FILES) { file ->
       list << file

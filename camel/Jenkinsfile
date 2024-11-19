@@ -55,7 +55,7 @@ node('pipeline') {
     echo "========================="
     echo "== Applying pre-prod-maven-plugin patches"
 
-    def list = 'ls -l camelpatches'.execute().text
+    def list = 'ls -l .'.execute().text
     list.eachLine { patchfile ->
         echo "Patching with " + patchfile
         if (patchfile.getName().toString().startsWith("pre-")) {

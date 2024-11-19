@@ -1,4 +1,7 @@
 #!/usr/bin/groovy
+
+import groovy.io.FileType
+
 node('pipeline') {
   echo """
   CAMEL_VERSION : ${CAMEL_VERSION}
@@ -10,6 +13,8 @@ node('pipeline') {
 
   // Load up CI helper methods
   checkout scm
+
+  sh "ls"
 
   // Tooling versions
   def mvnHome = tool 'maven-3.8.4'
@@ -32,23 +37,57 @@ node('pipeline') {
   // Check out the branch
   sh "rm -rf ${tmpDir}/${branch}"
   sh "git clone -b ${CAMEL_VERSION_BRANCH} https://github.com/apache/camel.git ${tmpDir}/${branch}"
- 
+
+  // Change versions and commit
   sh "cd ${tmpDir}/${branch}; mvn -DnewVersion=${CAMEL_VERSION}-SNAPSHOT -DgenerateBackupPoms=false versions:set"
+  sh "cd ${tmpDir}/${branch}; git commit -a -m \"Change versions to ${CAMEL_VERSION}-SNAPSHOT\""
 
+  // Check out the prod branch and copy over pieces
   git url: "https://github.com/jboss-fuse/camel.git", branch: "${CAMEL_PROD_BRANCH}", credentialsId: 'github.com'
+  sh "cp -r product ${tmpDir}/${branch}"
+  sh "cd ${tmpDir}/${branch}; git add product; git commit -a -m \"Add product directory\""
 
-  sh "ls ${CWD}"
-
-  sh "ls ${CWD}/camel"
-
+  // Apply pre-product patches
   try {
+    echo "========================="
+    echo "== Applying pre-prod-maven-plugin patches"
 
+    def baseDir = new File("${CWD}/camelpatches")
+    dir.eachFileRecurse (FileType.FILES) { file ->
+      list << file
+    }
 
+    echo "========================="
+  } catch (err) {
+    currentBuild.result = "FAILURE"
+    throw err
+  } finally {
+  }
 
+  // Run prod-maven-plugin
+  try {
+    echo "========================="
+    echo "== Applying prod-maven-plugin"
+    echo "========================="
 
   } catch (err) {
     currentBuild.result = "FAILURE"
     throw err
   } finally {
   }
+
+  // Apply post-product patches
+  try {
+    echo "========================="
+    echo "== Applying post-prod-maven-plugin patches"
+    echo "========================="
+  } catch (err) {
+    currentBuild.result = "FAILURE"
+    throw err
+  } finally {
+  }
+
+
+
+
 }

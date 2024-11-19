@@ -35,7 +35,7 @@ node('pipeline') {
  
   sh "cd ${tmpDir}/${branch}; mvn -DnewVersion=${CAMEL_VERSION}-SNAPSHOT -DgenerateBackupPoms=false versions:set"
 
-  git url: "https://github.com/jboss-fuse/camel.git", branch: ${CAMEL_PROD_BRANCH}, credentialsId: 'github.com'
+  git url: "https://github.com/jboss-fuse/camel.git", branch: "${CAMEL_PROD_BRANCH}", credentialsId: 'github.com'
 
   try {
 

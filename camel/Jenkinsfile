@@ -37,6 +37,10 @@ node('pipeline') {
 
   git url: "https://github.com/jboss-fuse/camel.git", branch: "${CAMEL_PROD_BRANCH}", credentialsId: 'github.com'
 
+  sh "ls ${CWD}"
+
+  sh "ls ${CWD}/camel"
+
   try {
 
 

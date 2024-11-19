@@ -35,11 +35,9 @@ node('pipeline') {
   echo "cwd=${CWD}"
   sh "ls ${CWD}/camelpatches"
   def camelpatches = new File("${CWD}/camelpatches")
-  if (camelpatches.exists()) {
-    println("camel patches exists")
-  }
-
+  
   // Check out the branch
+  echo "remove ${tmpDir}/${branch}"
   sh "rm -rf ${tmpDir}/${branch}"
   sh "git clone -b ${CAMEL_VERSION_BRANCH} https://github.com/apache/camel.git ${tmpDir}/${branch}"
 
@@ -57,7 +55,7 @@ node('pipeline') {
     echo "========================="
     echo "== Applying pre-prod-maven-plugin patches"
 
-    File[] files = camelpatches.listFiles().sort{ it.name }
+    File[] files = camelpatches.listFiles()
     for (File patchfile : files) {
       if (patchfile.getName().toString().startsWith("pre-")) {
         echo "cd ${tmpDir}/${branch}; git apply --check ${CWD}/" + patchfile.toString()
@@ -91,7 +89,7 @@ node('pipeline') {
     echo "== Applying post-prod-maven-plugin patches"
     echo "========================="
 
-    File[] files = camelpatches.listFiles().sort{ it.name }
+    File[] files = camelpatches.listFiles()
     for (File patchfile : files) {
       if (patchfile.getName().toString().startsWith("post-")) {
         echo "cd ${tmpDir}/${branch}; git apply --check ${CWD}/${patchfile}"

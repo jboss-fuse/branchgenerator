@@ -33,7 +33,7 @@ node('pipeline') {
   def camelprodbranch = "camel-prod-branch"
 
   def camelpatches = new File("${CWD}/camelpatches")
-  if camelpatches.exists() {
+  if (camelpatches.exists()) {
     println("camel patches exists")
   }
 

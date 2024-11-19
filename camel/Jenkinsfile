@@ -56,7 +56,7 @@ node('pipeline') {
     echo "== Applying pre-prod-maven-plugin patches"
 
     sh "ls"
-    File[] files = camelpatches.listFiles()
+    File[] files = new File("./camelpatches").listFiles()
     for (File patchfile : files) {
       echo "Patching with " + patchfile.getName().toString()
       if (patchfile.getName().toString().startsWith("pre-")) {

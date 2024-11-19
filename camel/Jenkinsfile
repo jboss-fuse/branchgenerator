@@ -54,7 +54,7 @@ node('pipeline') {
     echo "========================="
     echo "== Applying pre-prod-maven-plugin patches"
 
-    File[] files = new File("camelpatches").listFiles().sort{ it.name }
+    File[] files = camelpatches.listFiles().sort{ it.name }
     for (File patchfile : files) {
       if (patchfile.getName().toString().startsWith("pre-")) {
         echo "cd ${tmpDir}/${branch}; git apply --check ${CWD}/" + patchfile.toString()
@@ -88,7 +88,7 @@ node('pipeline') {
     echo "== Applying post-prod-maven-plugin patches"
     echo "========================="
 
-    File[] files = new File("camelpatches").listFiles().sort{ it.name }
+    File[] files = camelpatches.listFiles().sort{ it.name }
     for (File patchfile : files) {
       if (patchfile.getName().toString().startsWith("post-")) {
         echo "cd ${tmpDir}/${branch}; git apply --check ${CWD}/${patchfile}"

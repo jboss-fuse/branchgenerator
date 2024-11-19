@@ -14,8 +14,6 @@ node('pipeline') {
   // Load up CI helper methods
   checkout scm
 
-  sh "ls"
-
   // Tooling versions
   def mvnHome = tool 'maven-3.8.4'
   def javaHome = tool 'java-17'
@@ -34,7 +32,10 @@ node('pipeline') {
   def branch = "camel-${CAMEL_VERSION}-branch" 
   def camelprodbranch = "camel-prod-branch"
 
-  def camelpatches = new File("./camelpatches")
+  def camelpatches = new File("${CWD}/camelpatches")
+  if camelpatches.exists() {
+    println("camel patches exists")
+  }
 
   // Check out the branch
   sh "rm -rf ${tmpDir}/${branch}"

@@ -34,6 +34,8 @@ node('pipeline') {
   def branch = "camel-${CAMEL_VERSION}-branch" 
   def camelprodbranch = "camel-prod-branch"
 
+  def camelpatches = new File("./camelpatches")
+
   // Check out the branch
   sh "rm -rf ${tmpDir}/${branch}"
   sh "git clone -b ${CAMEL_VERSION_BRANCH} https://github.com/apache/camel.git ${tmpDir}/${branch}"
@@ -53,7 +55,7 @@ node('pipeline') {
     echo "== Applying pre-prod-maven-plugin patches"
 
     sh "ls ${CWD}/camelpatches"
-    def baseDir = new File("${CWD}/camelpatches")
+    def baseDir = camelpatches
     dir.eachFileRecurse (FileType.FILES) { file ->
       list << file
     }
